@@ -3,13 +3,11 @@
 #include <string.h>
 
 typedef struct pessoa {
-  int id;
   char nome[100];
   char cpf[12];
 } Pessoa;
 
 typedef struct carro {
-  int id;
   char placa[8];
   int ano;
   char modelo[50];
@@ -18,7 +16,7 @@ typedef struct carro {
 
 int tamPessoas = 0;
 int tamCarros = 0;
-int pessoasSemCarro = 0;
+int pessoasComCarro = 0;
 Pessoa *pessoas;
 Carro *carros;
 
@@ -42,25 +40,31 @@ void escreveArquivo() {
   for(i=0; i<tamPessoas; i++) {
     aux = 0;
     j = 0;
-    while(j < tamCarros) {
+    while(aux == 0 && j < tamCarros) {
       if(strcmp(pessoas[i].cpf, carros[j].cpf) == 0) {
-        fprintf(arquivoPessoas, "%d\n", pessoas[i].id);
+        pessoasComCarro++;
+        aux = 1;
+      }
+      j++;
+    }
+  }
+  fprintf(arquivoPessoas, "%d\n", pessoasComCarro);
+  for(i=0; i<tamPessoas; i++) {
+    aux = 0;
+    j = 0;
+    while(aux == 0 && j < tamCarros) {
+      if(strcmp(pessoas[i].cpf, carros[j].cpf) == 0) {
         fprintf(arquivoPessoas, "%s\n", pessoas[i].nome);
         if(i < tamPessoas-1)
           fprintf(arquivoPessoas, "%s\n", pessoas[i].cpf);
         else
           fprintf(arquivoPessoas, "%s", pessoas[i].cpf);
+        aux = 1;
       }
-      else
-        aux++;
       j++;
     }
-    if(aux == j)
-      pessoasSemCarro++;
   }
-  tamPessoas -= pessoasSemCarro;
   for(i=0; i<tamCarros; i++) {
-    fprintf(arquivoCarros, "%d\n", carros[i].id);
     fprintf(arquivoCarros, "%s\n", carros[i].placa);
     fprintf(arquivoCarros, "%d\n", carros[i].ano);
     fprintf(arquivoCarros, "%s\n", carros[i].modelo);
@@ -74,21 +78,23 @@ void escreveArquivo() {
 }
 
 void carregaArquivo() {
+  int i=0;
   FILE *arquivoPessoas;
   FILE *arquivoCarros;
   arquivoPessoas = fopen("pessoas.txt", "r");
   arquivoCarros = fopen("carros.txt", "r");
   if(arquivoPessoas != NULL) {
-    while(fscanf(arquivoPessoas, " %[^\n]", pessoas[tamPessoas].nome) > 0) {
-      pessoas = realloc(pessoas, (tamPessoas+2) * sizeof(Pessoa));
-      fscanf(arquivoPessoas, " %[^\n]", pessoas[tamPessoas].cpf);
-      tamPessoas++;
+    fscanf(arquivoPessoas, " %d", &tamPessoas);
+    pessoas = malloc(tamPessoas * sizeof(Pessoa));
+    while(fscanf(arquivoPessoas, " %[^\n]", pessoas[i].nome) > 0) {
+      fscanf(arquivoPessoas, " %[^\n]", pessoas[i].cpf);
+      i++;
     }
     fclose(arquivoPessoas);
   }
   if(arquivoCarros != NULL) {
     while(fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].placa) > 0) {
-      carros = realloc(carros, (tamCarros+2) * sizeof(Carro));
+      carros = realloc(carros, (tamCarros + 1) * sizeof(Carro));
       fscanf(arquivoCarros, "%d\n", &carros[tamCarros].ano);
       fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].modelo);
       fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].cpf);
@@ -135,7 +141,6 @@ void cadastraPessoa() {
       printf("CPF invalido, digite um CPF com 11 digitos\n");
     }
   } while(verifica == 1);
-  pessoa.id = tamPessoas;
   pessoas[tamPessoas] = pessoa;
   tamPessoas++;
 }
@@ -173,7 +178,6 @@ void cadastraCarro() {
       printf("CPF invalido\n");
     }
   } while(verifica == 0);
-  carro.id = tamCarros;
   carros[tamCarros] = carro;
   tamCarros++;
 }
@@ -198,7 +202,7 @@ void imprimeDados() {
 }
 
 int main() {
-  pessoas = malloc(sizeof(Pessoa));
+  // pessoas = malloc(sizeof(Pessoa));
   carros = malloc(sizeof(Carro));
   char opcao;
   carregaArquivo();
