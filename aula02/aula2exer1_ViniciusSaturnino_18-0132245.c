@@ -183,20 +183,23 @@ void cadastraCarro() {
 }
 
 void imprimeDados() {
-  int i;
+  int i, j;
   system("clear");
-  printf("----- PESSOAS CADASTRADAS -----\n");
+  printf("----- CADASTROS -----\n");
   for(i=0; i<tamPessoas; i++) {
+    printf("PESSOA NUMERO %d:\n", (i+1));
     printf("nome: %s\n", pessoas[i].nome);
     printf("cpf: %s\n", pessoas[i].cpf);
-  }
-  printf("\n\n");
-  printf("----- CARROS CADASTRADOS -----\n");
-  for(i=0; i<tamCarros; i++) {
-    printf("nome: %s\n", carros[i].placa);
-    printf("ano: %d\n", carros[i].ano);
-    printf("modelo: %s\n", carros[i].modelo);
-    printf("cpf do proprietario: %s\n", carros[i].cpf);
+    printf("\n\n");
+    printf("CARROS DA PESSOA %d:\n", (i+1));
+    for(j=0; j<tamCarros; j++) {
+      if(strcmp(pessoas[i].cpf, carros[j].cpf) == 0) {
+        printf("placa: %s\n", carros[i].placa);
+        printf("ano: %d\n", carros[i].ano);
+        printf("modelo: %s\n", carros[i].modelo);
+      }
+    }
+    printf("-----------------------\n\n");
   }
   printf("\n\n\n");
 }
