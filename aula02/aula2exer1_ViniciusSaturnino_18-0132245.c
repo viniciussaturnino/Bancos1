@@ -30,6 +30,34 @@ void menuOpcoes() {
   printf("Opcao: ");
 }
 
+void ordenaPessoas() {
+  int i, aux, c;
+  Pessoa tmp;
+  for(i=0; i<tamPessoas-1; i++)
+    for(aux=0; aux<tamPessoas-1; aux++) {
+      for(c=0; c<11 && pessoas[aux].cpf[c]==pessoas[aux+1].cpf[c]; c++);
+      if(pessoas[aux+1].cpf[c]<pessoas[aux].cpf[c]) {
+        tmp = pessoas[aux];
+        pessoas[aux] = pessoas[aux+1];
+        pessoas[aux+1] = tmp;
+      }
+    }
+}
+
+void ordenaCarros() {
+  int i, aux, c;
+  Carro tmp;
+  for(i=0; i<tamCarros-1; i++)
+    for(aux=0; aux<tamCarros-1; aux++) {
+      for(c=0; c<11 && carros[aux].cpf[c]==carros[aux+1].cpf[c]; c++);
+      if(carros[aux+1].cpf[c]<carros[aux].cpf[c]) {
+        tmp = carros[aux];
+        carros[aux] = carros[aux+1];
+        carros[aux+1] = tmp;
+      }
+    }
+}
+
 void escreveArquivo() {
   int i, j=0;
   int aux;
@@ -37,6 +65,8 @@ void escreveArquivo() {
   FILE *arquivoCarros;
   arquivoPessoas = fopen("pessoas.txt", "w");
   arquivoCarros = fopen("carros.txt", "w");
+  ordenaPessoas();
+  ordenaCarros();
   for(i=0; i<tamPessoas; i++) {
     aux = 0;
     j = 0;
@@ -94,7 +124,7 @@ void carregaArquivo() {
   }
   if(arquivoCarros != NULL) {
     while(fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].placa) > 0) {
-      carros = realloc(carros, (tamCarros + 1) * sizeof(Carro));
+      carros = realloc(carros, (tamCarros + 2) * sizeof(Carro));
       fscanf(arquivoCarros, "%d\n", &carros[tamCarros].ano);
       fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].modelo);
       fscanf(arquivoCarros, " %[^\n]", carros[tamCarros].cpf);
@@ -124,7 +154,7 @@ int placaExiste(char *placa) {
 
 void cadastraPessoa() {
   Pessoa pessoa;
-  pessoas = realloc(pessoas, (tamPessoas+1) * sizeof(Pessoa));
+  pessoas = realloc(pessoas, (tamPessoas+2) * sizeof(Pessoa));
   int verifica;
   printf("\n\n");
   printf("Digite o nome da pessoa: ");
@@ -147,7 +177,7 @@ void cadastraPessoa() {
 
 void cadastraCarro() {
   Carro carro;
-  carros = realloc(carros, (tamCarros+1) * sizeof(Carro));
+  carros = realloc(carros, (tamCarros+2) * sizeof(Carro));
   int verifica;
   printf("\n\n");
   do {
@@ -184,6 +214,8 @@ void cadastraCarro() {
 
 void imprimeDados() {
   int i, j;
+  ordenaPessoas();
+  ordenaCarros();
   system("clear");
   printf("----- CADASTROS -----\n");
   for(i=0; i<tamPessoas; i++) {
@@ -205,7 +237,6 @@ void imprimeDados() {
 }
 
 int main() {
-  // pessoas = malloc(sizeof(Pessoa));
   carros = malloc(sizeof(Carro));
   char opcao;
   carregaArquivo();
