@@ -216,7 +216,7 @@ void imprimeDados() {
   int i, j;
   ordenaPessoas();
   ordenaCarros();
-  system("clear");
+  system("cls");
   printf("----- CADASTROS -----\n");
   for(i=0; i<tamPessoas; i++) {
     printf("PESSOA NUMERO %d:\n", (i+1));
